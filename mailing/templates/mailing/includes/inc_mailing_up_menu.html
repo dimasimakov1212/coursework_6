@@ -9,7 +9,7 @@
                 <div style="background-color:#F0E68C;">
                     <div class="card-body">
 
-                        <a class="p-2 btn btn-outline-primary" href="#">Каталог</a>
+                        <a class="p-2 btn btn-outline-primary" href="{% url 'mailing:home' %}">Главная</a>
                         <a class="p-2 btn btn-outline-primary" href="#">Контакты</a>
                         <a class="p-2 btn btn-outline-success" href="#">Блог</a>
 
@@ -18,7 +18,7 @@
                         <a class="p-2 btn btn-outline-primary" href="{#}">Профиль</a>
                         {% else %}
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a>
-                        <a class="p-2 btn btn-outline-primary" href="{#}">Регистрация</a>
+                        <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
                         {% endif %}
 
                     </div>
