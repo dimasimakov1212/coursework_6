@@ -13,10 +13,27 @@
                         <a class="p-2 btn btn-outline-primary" href="#">Контакты</a>
                         <a class="p-2 btn btn-outline-success" href="#">Блог</a>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <nav class="ms-5">
+        <div class="col">
+            <div class="card bg-warning shadow-sm">
+                <div style="background-color:#F0E68C;">
+                    <div class="card-body">
+
                         {% if user.is_authenticated %}
+                        <div class="badge badge-primary text-wrap text-body" style="width: 10rem;">
+                            Привет, {{ user.email }}
+                        </div>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:logout' %}">Выйти</a>
-                        <a class="p-2 btn btn-outline-primary" href="{#}">Профиль</a>
+                        <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' %}">Профиль</a>
                         {% else %}
+                        <div class="badge badge-primary text-wrap text-body" style="width: 10rem;">
+                            Войдите в свой аккаунт или зарегистрируйтесь
+                        </div>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
                         {% endif %}

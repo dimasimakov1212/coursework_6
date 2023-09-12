@@ -7,10 +7,10 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, UpdateView
 
 from config import settings
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, UserProfileForm
 from users.models import User
 
 
@@ -82,3 +82,18 @@ class UserConfirmationFailView(View):
     Выводит информацию о невозможности зарегистрировать пользователя
     """
     template_name = 'users/email_confirmation_failed.html'
+
+
+class ProfileView(UpdateView):
+    """
+    Контроллер профиля пользователя
+    """
+    model = User
+    form_class = UserProfileForm
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        """
+        Позволяет делать необязательным передачу pk объекта
+        """
+        return self.request.user
