@@ -1,0 +1,36 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+
+    {% for object in object_list %}
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <p class="card-text">{{ object }}</p>
+                {% if object.is_superuser == False %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-sm btn-outline-secondary"
+                                href="{#}">View</a>
+                        <a type="button" class="btn btn-sm btn-outline-secondary"
+                                href="{#}">Edit</a>
+                        {% if perms.users.delete_user %}
+                        <a type="button" class="btn btn-sm btn-outline-danger"
+                                href="{#}">Delete</a>
+                        {% endif %}
+                    </div>
+                    {% if object.is_active %}
+                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' pk=object.id %}">Деактивировать</a>
+                    {% else %}
+                        <a class="btn btn-success" href="{% url 'users:toggle_activity' pk=object.id %}">Активировать</a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <h4 class="card-title">Доступ закрыт</h4>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

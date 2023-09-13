@@ -1,18 +1,24 @@
 <
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <div class="col-2">
-        <h3 class="card bg-secondary shadow-sm text-white text-center">Меню</h3>
-    </div>
     <nav class="ms-5">
         <div class="col">
             <div class="card bg-warning shadow-sm">
                 <div style="background-color:#F0E68C;">
                     <div class="card-body">
-
-                        <a class="p-2 btn btn-outline-primary" href="{% url 'mailing:home' %}">Главная</a>
+                        <a class="p-2 btn btn-secondary" href="{% url 'mailing:home' %}">Главная</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <nav class="ms-5">
+        <div class="col">
+            <div class="card bg-warning shadow-sm">
+                <div style="background-color:#F0E68C;">
+                    <div class="card-body">
+                        <a class="p-2 btn btn-outline-primary" href="{#}">Рассылки</a>
                         <a class="p-2 btn btn-outline-primary" href="#">Контакты</a>
                         <a class="p-2 btn btn-outline-success" href="#">Блог</a>
-
                     </div>
                 </div>
             </div>
@@ -43,4 +49,20 @@
             </div>
         </div>
     </nav>
+    {% if user.is_staff %}
+    <nav class="ms-5">
+        <div class="col">
+            <div class="card bg-warning shadow-sm">
+                <div style="background-color:#F0E68C;">
+                    <div class="card-body">
+                        <div class="badge badge-primary text-wrap text-body" style="width: 10rem;">
+                            Доступ для менеджера
+                        </div>
+                        <a class="p-2 btn btn-outline-primary" href="{% url 'users:user_list' %}">Пользователи</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
 </div>
