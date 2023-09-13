@@ -2,8 +2,9 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
 from users.apps import UsersConfig
+from users.services import toggle_activity
 from users.views import RegisterView, UserConfirmEmailView, UserConfirmationSentView, UserConfirmedView, \
-    UserConfirmationFailView, ProfileView
+    UserConfirmationFailView, ProfileView, UserListView
 
 app_name = UsersConfig.name
 
@@ -16,4 +17,6 @@ urlpatterns = [
     path('email_confirmed/', UserConfirmedView.as_view(), name='email_confirmed'),
     path('email_confirmation_failed/', UserConfirmationFailView.as_view(), name='email_confirmation_failed'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('user_list', UserListView.as_view(), name='user_list'),
+    path('activity/<int:pk>/', toggle_activity, name='toggle_activity'),
     ]

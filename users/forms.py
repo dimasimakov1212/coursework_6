@@ -39,3 +39,26 @@ class UserProfileForm(UserChangeForm):
         # передаем в шаблон контроль формы
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class ManagerUpdateUserProfileForm(UserChangeForm):
+    """
+    Форма профиля пользователя для редактирования менеджером
+    """
+
+    class Meta:
+        model = User
+        fields = ('is_active',)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Дополнительные настройки
+        """
+        super().__init__(*args, **kwargs)
+
+        # Позволяет не выводить в профиле поле пароля
+        self.fields['password'].widget = forms.HiddenInput()
+
+        # передаем в шаблон контроль формы
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

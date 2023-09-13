@@ -7,10 +7,10 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, ListView
 
 from config import settings
-from users.forms import UserRegisterForm, UserProfileForm
+from users.forms import UserRegisterForm, UserProfileForm, ManagerUpdateUserProfileForm
 from users.models import User
 
 
@@ -97,3 +97,31 @@ class ProfileView(UpdateView):
         Позволяет делать необязательным передачу pk объекта
         """
         return self.request.user
+
+    # def get_form_class(self):
+    #     # product = self.get_object()
+    #     user = self.request.user
+    #
+    #     if user.is_staff:  # проверяем права доступа
+    #         return ManagerUpdateUserProfileForm  # если менеджер, то выводится отдельная форма
+    #
+    #     else:
+    #         return UserProfileForm
+
+
+class UserListView(ListView):
+    """
+    Выводит информаццию о пользователях
+    """
+
+    model = User
+    template_name = 'users/user_list.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context['title'] = 'Пользователи'
+        # context['title_2'] = 'Полезные статьи'
+        return context
