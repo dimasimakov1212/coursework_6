@@ -87,7 +87,7 @@ class Mailing(models.Model):
     mailing_message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
     mailing_log = models.ForeignKey(Log, on_delete=models.CASCADE, verbose_name='лог')
     mailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
-    mailing_client = models.ManyToManyField(Client, verbose_name='владелец')
+    mailing_client = models.ManyToManyField(Client, verbose_name='клиенты')
 
     def __str__(self):
         # Строковое отображение объекта
