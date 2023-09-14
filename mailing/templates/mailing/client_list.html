@@ -1,0 +1,16 @@
+{% extends 'mailing/base.html' %}
+
+{% block content_1 %}
+<div class="row py-lg-2">
+    <div class="col-lg-11 col-md-8 mx-auto">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-primary" href="{#}">Создать клиента</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+
+{% endblock %}

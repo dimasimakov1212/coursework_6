@@ -27,11 +27,9 @@ class MainPageView(ListView):
 
 class MailingListView(ListView):
     """
-    Выводит информаццию о последних 6 товарах на главную страницу
+    Выводит информаццию о рассылках пользователя
     """
-
     model = Mailing
-
     template_name = 'mailing/mailing_list.html'
 
     # def get_queryset(self):
@@ -97,21 +95,6 @@ class MailingCreateView(CreateView):
 
     success_url = reverse_lazy('mailing:mailing_list')
 
-    # def get_context_data(self, **kwargs):
-    #     """
-    #     Выводит контекстную информацию в шаблон
-    #     """
-    #     context_data = super().get_context_data(**kwargs)
-    #
-    #     VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
-    #
-    #     if self.request.method == 'POST':
-    #         context_data['formset'] = VersionFormset(self.request.POST, instance=self.object)
-    #     else:
-    #         context_data['formset'] = VersionFormset(instance=self.object)
-    #
-    #     return context_data
-
     def form_valid(self, form):
         """
         Проверяем данные на правильность заполнения
@@ -126,3 +109,22 @@ class MailingCreateView(CreateView):
             formset.save()
 
         return super().form_valid(form)
+
+
+class ClientListView(ListView):
+    """
+    Выводит информаццию о клиентах пользователя
+    """
+    model = Mailing
+    template_name = 'mailing/client_list.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(ClientListView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Клиенты'
+        context['title_2'] = 'ваши клиенты для рассылок'
+
+        return context
