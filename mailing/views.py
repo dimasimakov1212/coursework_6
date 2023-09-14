@@ -6,9 +6,23 @@ from mailing.forms import MailingForm
 from mailing.models import Mailing
 
 
-def index(request):
+class MainPageView(ListView):
+    """
+    Стартовая страница
+    """
+    model = Mailing
+    template_name = 'mailing/base.html'
 
-    return render(request, 'mailing/base.html')
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MainPageView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Главная'
+        context['title_2'] = 'сервис создания рассылок'
+
+        return context
 
 
 class MailingListView(ListView):
