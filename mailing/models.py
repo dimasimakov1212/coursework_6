@@ -83,10 +83,11 @@ class Mailing(models.Model):
     mailing_title = models.CharField(max_length=150, verbose_name='заголовок')
     mailing_time = models.TimeField(verbose_name='время')
     mailing_period = models.CharField(max_length=20, choices=PERIOD_CHOICES, verbose_name='периодичность')
-    mailing_status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name='статус')
+    mailing_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created', verbose_name='статус')
     mailing_message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
     mailing_log = models.ForeignKey(Log, on_delete=models.CASCADE, verbose_name='лог')
     mailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
+    mailing_client = models.ManyToManyField(Client, verbose_name='владелец')
 
     def __str__(self):
         # Строковое отображение объекта
