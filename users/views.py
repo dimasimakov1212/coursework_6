@@ -108,6 +108,17 @@ class ProfileView(UpdateView):
     #     else:
     #         return UserProfileForm
 
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(ProfileView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Профиль'
+        context['title_2'] = 'редактирование профиля пользователя'
+
+        return context
+
 
 class UserListView(ListView):
     """
