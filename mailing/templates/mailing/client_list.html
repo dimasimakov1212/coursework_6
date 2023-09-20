@@ -4,7 +4,7 @@
 <div class="row py-lg-2">
     <div class="col-lg-11 col-md-8 mx-auto">
         {% if user.is_authenticated %}
-        <a class="btn btn-outline-primary" href="{#}">Создать клиента</a>
+        <a class="btn btn-outline-primary" href="{% url 'mailing:create_client' %}">Создать клиента</a>
         {% endif %}
     </div>
 </div>
@@ -12,5 +12,44 @@
 
 {% block content %}
 
+{% for client in object_list %}
+
+<div class="col-4">
+    <div class="card shadow-sm">
+        <p class="card-text">Клиент: {{ client.client_email }} ({{ client.client_first_name }})</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Username</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@twitter</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endfor %}
 
 {% endblock %}

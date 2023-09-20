@@ -1,6 +1,6 @@
 from django import forms
 
-from mailing.models import Mailing
+from mailing.models import Mailing, Client
 
 
 class StyleFormMixin:
@@ -28,3 +28,18 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
                 attrs={'type': 'time'}
             )
         }
+
+
+class ClientForm(StyleFormMixin, forms.ModelForm):
+    """
+     Создает форму для создания клиента
+    """
+
+    class Meta:
+        """
+        Определяет параметры формы
+        """
+        model = Client
+
+        exclude = ('client_owner',)  # выводит в форму все поля, кроме указанных
+

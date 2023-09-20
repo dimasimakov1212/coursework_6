@@ -3,6 +3,9 @@ from django.db import models
 from config import settings
 
 
+NULLABLE = {'blank': True, 'null': True}
+
+
 class Client(models.Model):
     """
     Модель создания клиента для рассылки
@@ -11,7 +14,8 @@ class Client(models.Model):
     client_first_name = models.CharField(max_length=150, verbose_name='имя')
     client_last_name = models.CharField(max_length=150, verbose_name='фамилия')
     client_comment = models.CharField(max_length=150, verbose_name='комментарий')
-    client_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
+    client_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                     verbose_name='владелец', **NULLABLE)
 
     def __str__(self):
         # Строковое отображение объекта
@@ -86,8 +90,9 @@ class Mailing(models.Model):
     mailing_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created', verbose_name='статус')
     mailing_message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
     mailing_log = models.ForeignKey(Log, on_delete=models.CASCADE, verbose_name='лог')
-    mailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец')
-    mailing_client = models.ManyToManyField(Client, verbose_name='клиенты')
+    mailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                      verbose_name='владелец', **NULLABLE)
+    mailing_client = models.ManyToManyField(Client, verbose_name='клиенты', **NULLABLE)
 
     def __str__(self):
         # Строковое отображение объекта

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 
-from mailing.forms import MailingForm
-from mailing.models import Mailing
+from mailing.forms import MailingForm, ClientForm
+from mailing.models import Mailing, Client
 
 
 class MainPageView(ListView):
@@ -115,7 +115,7 @@ class ClientListView(ListView):
     """
     Выводит информаццию о клиентах пользователя
     """
-    model = Mailing
+    model = Client
     template_name = 'mailing/client_list.html'
 
     def get_context_data(self, **kwargs):
@@ -127,4 +127,34 @@ class ClientListView(ListView):
         context['title'] = 'Клиенты'
         context['title_2'] = 'ваши клиенты для рассылок'
 
+        return context
+
+
+class ClientCreateView(CreateView):
+    """
+    Выводит форму создания клиента
+    """
+    model = Client
+    form_class = ClientForm
+
+    success_url = reverse_lazy('mailing:client_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        # formset = self.get_context_data()['formset']
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(ClientCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Клиенты'
+        context['title_2'] = 'Создание клиента'
         return context
