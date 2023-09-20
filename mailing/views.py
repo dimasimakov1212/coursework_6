@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from mailing.forms import MailingForm, ClientForm
 from mailing.models import Mailing, Client
@@ -167,4 +167,50 @@ class ClientCreateView(CreateView):
         context = super(ClientCreateView, self).get_context_data(**kwargs)
         context['title'] = 'Клиенты'
         context['title_2'] = 'Создание клиента'
+        return context
+
+
+class ClientUpdateView(UpdateView):
+    """
+    Выводит форму редактирования клиента
+    """
+    model = Client
+    form_class = ClientForm
+
+    success_url = reverse_lazy('mailing:client_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        self.object = form.save()
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(ClientUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'Клиенты'
+        context['title_2'] = 'Редактирование клиента'
+        return context
+
+
+class ClientDeleteView(DeleteView):
+    """
+    Выводит форму удаления клиента
+    """
+    model = Client
+
+    success_url = reverse_lazy('mailing:client_list')
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(ClientDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Клиенты'
+        context['title_2'] = 'Удаление клиента'
         return context

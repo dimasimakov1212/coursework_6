@@ -33,9 +33,9 @@
 
                 <td>
                     <a type="button" class="btn btn-sm btn-outline-secondary"
-                       href="#">Edit</a>
+                       href="{% url 'mailing:edit_client' pk=client.id %}">Edit</a>
                     <a type="button" class="btn btn-sm btn-outline-danger"
-                       href="#">Delete</a>
+                       href="{% url 'mailing:delete_client' pk=client.id %}">Delete</a>
                 </td>
             </tr>
             {% endfor %}
