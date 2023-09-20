@@ -5,6 +5,7 @@
     <div class="col-lg-11 col-md-8 mx-auto">
         {% if user.is_authenticated %}
         <a class="btn btn-outline-primary" href="{% url 'mailing:create_mailing' %}">Создать рассылку</a>
+        <a class="btn btn-outline-primary" href="{% url 'mailing:message_list' %}">Мои сообщения</a>
         <a class="btn btn-outline-primary" href="{% url 'mailing:client_list' %}">Мои клиенты</a>
         {% else %}
         <a class="btn btn-outline-primary">Создавать рассылки могут только зарегистрированные пользователи</a>

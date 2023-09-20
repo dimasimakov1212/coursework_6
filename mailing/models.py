@@ -33,6 +33,8 @@ class Message(models.Model):
     """
     message_title = models.CharField(max_length=150, verbose_name='тема')
     message_text = models.TextField(verbose_name='содержание')
+    message_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                      verbose_name='владелец', **NULLABLE)
 
     def __str__(self):
         # Строковое отображение объекта

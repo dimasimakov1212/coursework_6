@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from mailing.forms import MailingForm, ClientForm
-from mailing.models import Mailing, Client
+from mailing.models import Mailing, Client, Message
 
 
 class MainPageView(ListView):
@@ -32,52 +32,12 @@ class MailingListView(ListView):
     model = Mailing
     template_name = 'mailing/mailing_list.html'
 
-    # def get_queryset(self):
-    #
-    #     user = self.request.user
-    #
-    #     if user.is_authenticated:  # для зарегистрированных пользователей
-    #         if user.is_staff or user.is_superuser:  # для работников и суперпользователя
-    #             queryset = super().get_queryset().order_by('-pk')[:6]
-    #
-    #         else:  # для остальных пользователей
-    #             queryset = super().get_queryset().filter(
-    #                 is_active=True).order_by('-pk')[:6]
-    #     else:  # для незарегистрированных пользователей
-    #         queryset = super().get_queryset().filter(
-    #             is_active=True).order_by('-pk')[:6]
-    #     return queryset
-
-    # def get_queryset(self, *args, **kwargs):
-    #     """
-    #     Выводит в список только товары конкретного пользователя,
-    #     либо если пользователь не авторизован - выводит все товары
-    #     """
-    #     queryset = super().get_queryset(*args, **kwargs)
-    #
-    #     try:
-    #         queryset = queryset.filter(owner=self.request.user)
-    #
-    #     except TypeError:
-    #         queryset = queryset.all().order_by('-pk')[:5]  # выводит последние 5 товаров
-    #
-    #     return queryset
-
 # --------------------- рабочая версия ---------------------------
     def get_context_data(self, **kwargs):
         """
         Выводит контекстную информацию в шаблон
         """
         context = super(MailingListView, self).get_context_data(**kwargs)
-
-        # for product in context['product_list']:
-        #     active_version = Version.objects.filter(product=product, is_active=True).last()
-        #     if active_version:
-        #         product.active_version_number = active_version.version_number
-        #         product.active_version_name = active_version.version_name
-        #     else:
-        #         product.active_version_number = None
-        #         product.active_version_name = None
 
         context['title'] = 'Рассылки'
         context['title_2'] = 'ваши рассылки'
@@ -99,16 +59,22 @@ class MailingCreateView(CreateView):
         """
         Проверяем данные на правильность заполнения
         """
-        formset = self.get_context_data()['formset']
+        # formset = self.get_context_data()['formset']
+        user = self.request.user
         self.object = form.save()
-        self.object.owner = self.request.user
+        self.object.mailing_owner = user
         self.object.save()
 
-        if formset.is_valid():
-            formset.instance = self.object
-            formset.save()
+        # if formset.is_valid():
+        #     formset.instance = self.object
+        #     formset.save()
 
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class ClientListView(ListView):
@@ -120,8 +86,7 @@ class ClientListView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         """
-        Выводит в список только товары конкретного пользователя,
-        либо если пользователь не авторизован - выводит все товары
+        Выводит в список только клиентов конкретного пользователя
         """
         queryset = super().get_queryset(*args, **kwargs)
 
@@ -213,4 +178,33 @@ class ClientDeleteView(DeleteView):
         context = super(ClientDeleteView, self).get_context_data(**kwargs)
         context['title'] = 'Клиенты'
         context['title_2'] = 'Удаление клиента'
+        return context
+
+
+class MessageListView(ListView):
+    """
+    Выводит информаццию о сообщениях пользователя для рассылок
+    """
+    model = Message
+    template_name = 'mailing/message_list.html'
+
+    def get_queryset(self, *args, **kwargs):
+        """
+        Выводит в список только сообщения конкретного пользователя
+        """
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.filter(message_owner=self.request.user)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MessageListView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Сообщения'
+        context['title_2'] = 'ваши сообщения для рассылок'
+
         return context

@@ -1,0 +1,42 @@
+{% extends 'mailing/base.html' %}
+
+{% block content_1 %}
+<div class="row py-lg-2">
+    <div class="col-lg-11 col-md-8 mx-auto">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-primary" href="{#}">Создать сообщение</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="col">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+                <th scope="col">Редактирование</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for message in object_list %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ message.message_title }}</td>
+
+                <td>
+                    <a type="button" class="btn btn-sm btn-outline-secondary"
+                       href="#">Edit</a>
+                    <a type="button" class="btn btn-sm btn-outline-danger"
+                       href="#">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+{% endblock %}
