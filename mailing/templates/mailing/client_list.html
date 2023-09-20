@@ -1,0 +1,46 @@
+{% extends 'mailing/base.html' %}
+
+{% block content_1 %}
+<div class="row py-lg-2">
+    <div class="col-lg-11 col-md-8 mx-auto">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-primary" href="{% url 'mailing:create_client' %}">Создать клиента</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="col">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">email</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Редактирование</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for client in object_list %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ client.client_email }}</td>
+                <td>{{ client.client_first_name }}</td>
+                <td>{{ client.client_last_name }}</td>
+
+                <td>
+                    <a type="button" class="btn btn-sm btn-outline-secondary"
+                       href="{% url 'mailing:edit_client' pk=client.id %}">Edit</a>
+                    <a type="button" class="btn btn-sm btn-outline-danger"
+                       href="{% url 'mailing:delete_client' pk=client.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+{% endblock %}

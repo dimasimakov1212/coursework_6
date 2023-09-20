@@ -1,0 +1,43 @@
+{% extends 'mailing/base.html' %}
+
+{% block content_1 %}
+<div class="row py-lg-2">
+    <div class="col-lg-11 col-md-8 mx-auto">
+        {% if user.is_authenticated %}
+        <a class="btn btn-outline-primary" href="{% url 'mailing:create_message' %}">Создать сообщение</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="w-100 p-3">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+                <th scope="col">Сообщение</th>
+                <th scope="col">Редактирование</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for message in object_list %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ message.message_title }}</td>
+                <td>{{ message.message_text|truncatechars:100 }}</td>
+                <td>
+                    <a type="button" class="btn btn-sm btn-outline-secondary"
+                       href="{% url 'mailing:edit_message' pk=message.id %}">Edit</a>
+                    <a type="button" class="btn btn-sm btn-outline-danger"
+                       href="{% url 'mailing:delete_message' pk=message.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+{% endblock %}
