@@ -118,6 +118,17 @@ class ClientListView(ListView):
     model = Client
     template_name = 'mailing/client_list.html'
 
+    def get_queryset(self, *args, **kwargs):
+        """
+        Выводит в список только товары конкретного пользователя,
+        либо если пользователь не авторизован - выводит все товары
+        """
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.filter(client_owner=self.request.user)
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         """
         Выводит контекстную информацию в шаблон
@@ -143,9 +154,8 @@ class ClientCreateView(CreateView):
         """
         Проверяем данные на правильность заполнения
         """
-        # formset = self.get_context_data()['formset']
         self.object = form.save()
-        self.object.owner = self.request.user
+        self.object.client_owner = self.request.user
         self.object.save()
 
         return super().form_valid(form)

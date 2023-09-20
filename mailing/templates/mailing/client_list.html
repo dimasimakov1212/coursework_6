@@ -12,44 +12,35 @@
 
 {% block content %}
 
-{% for client in object_list %}
-
-<div class="col-4">
-    <div class="card shadow-sm">
-        <p class="card-text">Клиент: {{ client.client_email }} ({{ client.client_first_name }})</p>
-        <table class="table">
+<div class="col">
+        <table class="table table-bordered">
             <thead>
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">email</th>
                 <th scope="col">Имя</th>
                 <th scope="col">Фамилия</th>
-                <th scope="col">Username</th>
+                <th scope="col">Редактирование</th>
             </tr>
             </thead>
             <tbody>
+            {% for client in object_list %}
             <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ client.client_email }}</td>
+                <td>{{ client.client_first_name }}</td>
+                <td>{{ client.client_last_name }}</td>
+
+                <td>
+                    <a type="button" class="btn btn-sm btn-outline-secondary"
+                       href="#">Edit</a>
+                    <a type="button" class="btn btn-sm btn-outline-danger"
+                       href="#">Delete</a>
+                </td>
             </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
+            {% endfor %}
             </tbody>
         </table>
-    </div>
 </div>
-
-{% endfor %}
 
 {% endblock %}
