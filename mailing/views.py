@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from mailing.forms import MailingForm, ClientForm
+from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, Client, Message
 
 
@@ -207,4 +207,79 @@ class MessageListView(ListView):
         context['title'] = 'Сообщения'
         context['title_2'] = 'ваши сообщения для рассылок'
 
+        return context
+
+
+class MessageCreateView(CreateView):
+    """
+    Выводит форму создания клиента
+    """
+    model = Message
+    form_class = MessageForm
+
+    success_url = reverse_lazy('mailing:message_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        self.object = form.save()
+        self.object.message_owner = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MessageCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Сообщения'
+        context['title_2'] = 'Создание сообщения'
+        return context
+
+
+class MessageUpdateView(UpdateView):
+    """
+    Выводит форму редактирования сообщения
+    """
+    model = Message
+    form_class = MessageForm
+
+    success_url = reverse_lazy('mailing:message_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        self.object = form.save()
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MessageUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'Сообщения'
+        context['title_2'] = 'Редактирование сообщения'
+        return context
+
+
+class MessageDeleteView(DeleteView):
+    """
+    Выводит форму удаления сообщения
+    """
+    model = Message
+
+    success_url = reverse_lazy('mailing:message_list')
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MessageDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Сообщения'
+        context['title_2'] = 'Удаление сообщения'
         return context

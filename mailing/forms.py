@@ -1,6 +1,6 @@
 from django import forms
 
-from mailing.models import Mailing, Client
+from mailing.models import Mailing, Client, Message
 
 
 class StyleFormMixin:
@@ -51,3 +51,16 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
 
         exclude = ('client_owner',)  # выводит в форму все поля, кроме указанных
 
+
+class MessageForm(StyleFormMixin, forms.ModelForm):
+    """
+     Создает форму для создания сообщения
+    """
+
+    class Meta:
+        """
+        Определяет параметры формы
+        """
+        model = Message
+
+        exclude = ('message_owner',)  # выводит в форму все поля, кроме указанных
