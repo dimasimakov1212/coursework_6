@@ -30,7 +30,7 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         """
         model = Mailing
 
-        exclude = ('mailing_status', 'mailing_log', 'mailing_owner')  # выводит в форму все поля, кроме указанных
+        exclude = ('mailing_log', 'mailing_owner')  # выводит в форму все поля, кроме указанных
         widgets = {
             'mailing_time': forms.TimeInput(
                 attrs={'type': 'time'}
