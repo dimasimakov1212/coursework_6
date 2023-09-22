@@ -17,7 +17,7 @@
                         <a type="button" class="btn btn-sm btn-outline-secondary"
                            href="{% url 'mailing:edit_mailing' pk=object.id %}">Edit</a>
                         <a type="button" class="btn btn-sm btn-outline-danger"
-                           href="#">Delete</a>
+                           href="{% url 'mailing:delete_mailing' pk=object.id %}">Delete</a>
                         {% endif %}
                     </div>
                 </div>

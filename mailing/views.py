@@ -111,7 +111,7 @@ class MailingDetailView(DetailView):
 
 class MailingUpdateView(UpdateView):
     """
-    Выводит форму редактирования клиента
+    Выводит форму редактирования рассылки
     """
     model = Mailing
     form_class = MailingForm
@@ -140,6 +140,24 @@ class MailingUpdateView(UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+class MailingDeleteView(DeleteView):
+    """
+    Выводит форму удаления рассылки
+    """
+    model = Mailing
+
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MailingDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Рассылки'
+        context['title_2'] = 'Удаление рассылки'
+        return context
 
 
 class ClientListView(ListView):

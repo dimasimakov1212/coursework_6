@@ -53,7 +53,7 @@
                                 <a type="button" class="btn btn-lg btn-outline-warning"
                                    href="{% url 'mailing:edit_mailing' pk=mailing.id %}">Edit</a>
                                 <a type="button" class="btn btn-lg btn-outline-danger"
-                                   href="#">Delete</a>
+                                   href="{% url 'mailing:delete_mailing' pk=mailing.id %}">Delete</a>
                             </div>
                         </div>
                     </div>
