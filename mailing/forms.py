@@ -24,6 +24,9 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         # определяем список клиентов для рассылки, принадлежащих пользователю
         self.fields['mailing_client'].queryset = Client.objects.filter(client_owner=user)
 
+        # определяем список сообщений для рассылки, принадлежащих пользователю
+        self.fields['mailing_message'].queryset = Message.objects.filter(message_owner=user)
+
     class Meta:
         """
         Определяет параметры формы
