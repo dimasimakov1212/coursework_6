@@ -24,13 +24,16 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         # определяем список клиентов для рассылки, принадлежащих пользователю
         self.fields['mailing_client'].queryset = Client.objects.filter(client_owner=user)
 
+        # определяем список сообщений для рассылки, принадлежащих пользователю
+        self.fields['mailing_message'].queryset = Message.objects.filter(message_owner=user)
+
     class Meta:
         """
         Определяет параметры формы
         """
         model = Mailing
 
-        exclude = ('mailing_status', 'mailing_log', 'mailing_owner')  # выводит в форму все поля, кроме указанных
+        exclude = ('mailing_log', 'mailing_owner')  # выводит в форму все поля, кроме указанных
         widgets = {
             'mailing_time': forms.TimeInput(
                 attrs={'type': 'time'}

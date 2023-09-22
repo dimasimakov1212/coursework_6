@@ -16,5 +16,52 @@
 
 {% block content %}
 
+{% for mailing in object_list %}
+<main class="w-100 p-1">
+    <div class="row text-center">
+        <div class="col-12">
+            <div class="card mb-6 rounded-3 shadow-sm">
+                <div class="card-header py-3">
+                    <h5 class="my-0 fw-normal">Рассылка - {{ mailing.mailing_title }}
+                        ({{ mailing.mailing_message.message_text|truncatechars:50 }})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <button class="w-100 btn btn-primary" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseExample{{ forloop.counter }}" aria-expanded="false"
+                                aria-controls="collapseExample">
+                            Развернуть/свернуть
+                        </button>
+                        <div class="collapse" id="collapseExample{{ forloop.counter }}">
+                            <div class="card card-body">
+                                Время рассылки - {{ mailing.mailing_time }}
+                            <br>
+                                Период рассылки - {{ mailing.mailing_period }}
+                            <br>
+                                Статус рассылки - {{ mailing.mailing_status }}
+                            <br>
+                                Клиенты рассылки -<br>
+                                {% for client in mailing.mailing_client.all %}
+                                {{ client }}<br>
+                                {% endfor %}
+                            <br>
+                            </div>
+                            <br>
+                            <div class="col">
+                                <a type="button" class="btn btn-lg btn-outline-success"
+                                   href="{% url 'mailing:mailing_detail' pk=mailing.id %}">View</a>
+                                <a type="button" class="btn btn-lg btn-outline-warning"
+                                   href="{% url 'mailing:edit_mailing' pk=mailing.id %}">Edit</a>
+                                <a type="button" class="btn btn-lg btn-outline-danger"
+                                   href="{% url 'mailing:delete_mailing' pk=mailing.id %}">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endfor %}
 
 {% endblock %}

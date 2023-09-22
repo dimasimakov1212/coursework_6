@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, Client, Message
@@ -32,7 +32,22 @@ class MailingListView(ListView):
     model = Mailing
     template_name = 'mailing/mailing_list.html'
 
-# --------------------- рабочая версия ---------------------------
+    def get_queryset(self, *args, **kwargs):
+        """
+        Выводит в список только рассылки конкретного пользователя
+        """
+        queryset = super().get_queryset(*args, **kwargs)
+
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='Manager'):
+            return queryset
+
+        else:
+            queryset = queryset.filter(mailing_owner=user)
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         """
         Выводит контекстную информацию в шаблон
@@ -43,7 +58,6 @@ class MailingListView(ListView):
         context['title_2'] = 'ваши рассылки'
 
         return context
-# # ----------------------------------------------------------------
 
 
 class MailingCreateView(CreateView):
@@ -75,6 +89,75 @@ class MailingCreateView(CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+class MailingDetailView(DetailView):
+    """
+    Выводит информаццию об одной рассылке
+    """
+    model = Mailing
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MailingDetailView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Рассылки'
+        context['title_2'] = 'информация о рассылке'
+
+        return context
+
+
+class MailingUpdateView(UpdateView):
+    """
+    Выводит форму редактирования рассылки
+    """
+    model = Mailing
+    form_class = MailingForm
+
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        self.object = form.save()
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MailingUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'Рассылки'
+        context['title_2'] = 'Редактирование рассылки'
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class MailingDeleteView(DeleteView):
+    """
+    Выводит форму удаления рассылки
+    """
+    model = Mailing
+
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MailingDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Рассылки'
+        context['title_2'] = 'Удаление рассылки'
+        return context
 
 
 class ClientListView(ListView):
