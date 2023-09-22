@@ -109,6 +109,39 @@ class MailingDetailView(DetailView):
         return context
 
 
+class MailingUpdateView(UpdateView):
+    """
+    Выводит форму редактирования клиента
+    """
+    model = Mailing
+    form_class = MailingForm
+
+    success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        """
+        Проверяем данные на правильность заполнения
+        """
+        self.object = form.save()
+        self.object.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(MailingUpdateView, self).get_context_data(**kwargs)
+        context['title'] = 'Рассылки'
+        context['title_2'] = 'Редактирование рассылки'
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
 class ClientListView(ListView):
     """
     Выводит информаццию о клиентах пользователя

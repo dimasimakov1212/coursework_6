@@ -15,7 +15,7 @@
                     <div class="btn-group">
                         {% if request.user == mailing.mailing_owner %}
                         <a type="button" class="btn btn-sm btn-outline-secondary"
-                           href="#">Edit</a>
+                           href="{% url 'mailing:edit_mailing' pk=object.id %}">Edit</a>
                         <a type="button" class="btn btn-sm btn-outline-danger"
                            href="#">Delete</a>
                         {% endif %}
