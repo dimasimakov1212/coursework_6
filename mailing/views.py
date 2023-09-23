@@ -1,9 +1,14 @@
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from datetime import datetime
+from smtplib import SMTPException
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from mailing.forms import MailingForm, ClientForm, MessageForm
-from mailing.models import Mailing, Client, Message
+from mailing.models import Mailing, Client, Message, Log
+from mailing.services import sending_email
 
 
 class MainPageView(ListView):
@@ -38,13 +43,17 @@ class MailingListView(ListView):
         """
         queryset = super().get_queryset(*args, **kwargs)
 
-        user = self.request.user
+        try:
+            user = self.request.user
 
-        if user.is_superuser or user.groups.filter(name='Manager'):
-            return queryset
+            if user.is_superuser or user.groups.filter(name='manager'):
+                return queryset
 
-        else:
-            queryset = queryset.filter(mailing_owner=user)
+            else:
+                queryset = queryset.filter(mailing_owner=user)
+
+        except TypeError:
+            pass
 
         return queryset
 
@@ -366,3 +375,64 @@ class MessageDeleteView(DeleteView):
         context['title'] = 'Сообщения'
         context['title_2'] = 'Удаление сообщения'
         return context
+
+
+def send_mailing_to_clients(request):
+    """
+    Функция отправки рассылок клиентам
+    """
+
+    user = request.user
+    mailings = Mailing.objects.filter(mailing_owner=user)  # получаем рассылки пользователя
+
+    # mailings = Mailing.objects.all()  # получаем все рассылки
+
+    for mailing in mailings:
+        if mailing.mailing_status == 'рассылается':  # проверяем статус рассылки, если 'рассылается', то происходит отправка
+
+            for client in mailing.mailing_clients.all():
+                subject = mailing.mailing_title  # тема письма
+                message = mailing.mailing_message.message_text  # текст письма
+                email = client.client_email  # почта клиента
+
+                date_time_now = datetime.now()
+
+                try:
+                    sending_email(subject, message, email)  # функция отправки письма
+
+                    # записываем логи рассылки
+                    Log.objects.create(
+                        log_status=Log.STATUS_TRUE,
+                        log_date_time=date_time_now,
+                        log_server_answer='доставлено',
+                        log_mailing=mailing,
+                        log_client=client
+                    )
+
+                except SMTPException as server_answer:
+
+                    Log.objects.create(
+                        log_status=Log.STATUS_FALSE,
+                        log_date_time=date_time_now,
+                        log_server_answer=server_answer,
+                        log_mailing=mailing,
+                        log_client=client
+                    )
+
+    return redirect(reverse('mailing:mailing_list'))
+
+
+def mailing_logs(request, pk):
+    mailing = get_object_or_404(Mailing, pk=pk)
+    logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')
+
+    if (mailing.mailing_owner == request.user or request.user.is_superuser
+            or request.user.groups.filter(name='manager').exists()):
+        context = {
+            'title': 'Логи',
+            'title_2': 'логи ваших рассылок',
+            'logs': logs,
+        }
+        return render(request, 'mailing/log_list.html', context)
+    else:
+        return redirect("mailing:mailing_list")
