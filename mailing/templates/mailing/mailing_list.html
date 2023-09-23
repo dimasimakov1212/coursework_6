@@ -56,6 +56,8 @@
                                    href="{% url 'mailing:edit_mailing' pk=mailing.id %}">Edit</a>
                                 <a type="button" class="btn btn-lg btn-outline-danger"
                                    href="{% url 'mailing:delete_mailing' pk=mailing.id %}">Delete</a>
+                                <a type="button" class="btn btn-lg btn-outline-secondary"
+                                   href="{% url 'mailing:log_list' pk=mailing.id %}">Logs</a>
                             </div>
                         </div>
                     </div>

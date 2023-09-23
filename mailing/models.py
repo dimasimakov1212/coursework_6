@@ -46,32 +46,6 @@ class Message(models.Model):
         ordering = ('id',)  # поле для сортировки
 
 
-class Log(models.Model):
-    """
-    Модель логов рассылки
-    """
-    STATUS_TRUE = 'отправлено'
-    STATUS_FALSE = 'не отправлено'
-
-    STATUS_CHOICES = (
-        (STATUS_TRUE, 'отправлено'),
-        (STATUS_FALSE, 'не отправлено')
-    )
-
-    log_date_time = models.DateTimeField(verbose_name='дата-время')
-    log_status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name='Статус')
-    log_server_answer = models.TextField(verbose_name='ответ сервера')
-
-    def __str__(self):
-        # Строковое отображение объекта
-        return f'{self.log_date_time} - {self.log_status}'
-
-    class Meta:
-        verbose_name = 'Лог'  # наименование одного объекта
-        verbose_name_plural = 'Логи'  # наименование набора объектов
-        ordering = ('log_date_time',)  # поле для сортировки
-
-
 class Mailing(models.Model):
     """
     Модель рассылки
@@ -101,7 +75,6 @@ class Mailing(models.Model):
     mailing_period = models.CharField(max_length=20, choices=PERIOD_CHOICES, verbose_name='периодичность')
     mailing_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_CREATED, verbose_name='статус')
     mailing_message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
-    mailing_log = models.ForeignKey(Log, on_delete=models.CASCADE, verbose_name='лог', **NULLABLE)
     mailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                       verbose_name='владелец', **NULLABLE)
     mailing_clients = models.ManyToManyField(Client, verbose_name='клиенты')
@@ -114,3 +87,31 @@ class Mailing(models.Model):
         verbose_name = 'Рассылка'  # наименование одного объекта
         verbose_name_plural = 'Рассылки'  # наименование набора объектов
         ordering = ('id',)  # поле для сортировки
+
+
+class Log(models.Model):
+    """
+    Модель логов рассылки
+    """
+    STATUS_TRUE = 'отправлено'
+    STATUS_FALSE = 'не отправлено'
+
+    STATUS_CHOICES = (
+        (STATUS_TRUE, 'отправлено'),
+        (STATUS_FALSE, 'не отправлено')
+    )
+
+    log_date_time = models.DateTimeField(verbose_name='дата-время')
+    log_status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name='Статус')
+    log_server_answer = models.TextField(verbose_name='ответ сервера')
+    log_mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='рассылка')
+    log_client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='клиент', **NULLABLE)
+
+    def __str__(self):
+        # Строковое отображение объекта
+        return f'{self.log_date_time} - {self.log_status}'
+
+    class Meta:
+        verbose_name = 'Лог'  # наименование одного объекта
+        verbose_name_plural = 'Логи'  # наименование набора объектов
+        ordering = ('log_date_time',)  # поле для сортировки
