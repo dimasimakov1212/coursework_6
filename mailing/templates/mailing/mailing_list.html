@@ -7,6 +7,8 @@
         <a class="btn btn-outline-primary" href="{% url 'mailing:create_mailing' %}">Создать рассылку</a>
         <a class="btn btn-outline-primary" href="{% url 'mailing:message_list' %}">Мои сообщения</a>
         <a class="btn btn-outline-primary" href="{% url 'mailing:client_list' %}">Мои клиенты</a>
+        <a type="button" class="btn btn-outline-success"
+                                   href="{% url 'mailing:send_mailing' %}">Отправить рассылки</a>
         {% else %}
         <a class="btn btn-outline-primary">Создавать рассылки могут только зарегистрированные пользователи</a>
         {% endif %}
@@ -41,7 +43,7 @@
                                 Статус рассылки - {{ mailing.mailing_status }}
                             <br>
                                 Клиенты рассылки -<br>
-                                {% for client in mailing.mailing_client.all %}
+                                {% for client in mailing.mailing_clients.all %}
                                 {{ client }}<br>
                                 {% endfor %}
                             <br>
