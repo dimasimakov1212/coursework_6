@@ -64,7 +64,9 @@ class MailingListView(ListView):
         context = super(MailingListView, self).get_context_data(**kwargs)
 
         context['title'] = 'Рассылки'
-        context['title_2'] = 'ваши рассылки'
+        context['title_2'] = 'мои рассылки'
+        context['title_3'] = ('(Перед созданием рассылки необходимо занести клиента и создать сообщение. '
+                              'Кнопка отправить рассылки сейчас позволяет запустить рассылки вне расписания)')
 
         return context
 
@@ -193,7 +195,7 @@ class ClientListView(ListView):
         context = super(ClientListView, self).get_context_data(**kwargs)
 
         context['title'] = 'Клиенты'
-        context['title_2'] = 'ваши клиенты для рассылок'
+        context['title_2'] = 'мои клиенты для рассылок'
 
         return context
 
@@ -297,7 +299,7 @@ class MessageListView(ListView):
         context = super(MessageListView, self).get_context_data(**kwargs)
 
         context['title'] = 'Сообщения'
-        context['title_2'] = 'ваши сообщения для рассылок'
+        context['title_2'] = 'мои сообщения для рассылок'
 
         return context
 
@@ -385,52 +387,32 @@ def send_mailing_to_clients(request):
     user = request.user
     mailings = Mailing.objects.filter(mailing_owner=user)  # получаем рассылки пользователя
 
-    # mailings = Mailing.objects.all()  # получаем все рассылки
-
     for mailing in mailings:
         if mailing.mailing_status == 'рассылается':  # проверяем статус рассылки, если 'рассылается', то происходит отправка
 
             for client in mailing.mailing_clients.all():
-                subject = mailing.mailing_title  # тема письма
-                message = mailing.mailing_message.message_text  # текст письма
-                email = client.client_email  # почта клиента
 
-                date_time_now = datetime.now()
-
-                try:
-                    sending_email(subject, message, email)  # функция отправки письма
-
-                    # записываем логи рассылки
-                    Log.objects.create(
-                        log_status=Log.STATUS_TRUE,
-                        log_date_time=date_time_now,
-                        log_server_answer='доставлено',
-                        log_mailing=mailing,
-                        log_client=client
-                    )
-
-                except SMTPException as server_answer:
-
-                    Log.objects.create(
-                        log_status=Log.STATUS_FALSE,
-                        log_date_time=date_time_now,
-                        log_server_answer=server_answer,
-                        log_mailing=mailing,
-                        log_client=client
-                    )
+                sending_email(mailing, client)  # функция отправки письма
 
     return redirect(reverse('mailing:mailing_list'))
 
 
 def mailing_logs(request, pk):
+    """
+    Выводит список логов рассылки
+    :param request:
+    :param pk: id рассылки
+    :return:
+    """
     mailing = get_object_or_404(Mailing, pk=pk)
-    logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')
+    logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')[:10]
 
     if (mailing.mailing_owner == request.user or request.user.is_superuser
             or request.user.groups.filter(name='manager').exists()):
         context = {
             'title': 'Логи',
             'title_2': 'логи ваших рассылок',
+            'title_3': '(выводится список из 10 последних логов рассылки)',
             'logs': logs,
         }
         return render(request, 'mailing/log_list.html', context)
