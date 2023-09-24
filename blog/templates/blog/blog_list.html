@@ -40,11 +40,13 @@
                             <br>
                             <div class="col">
                                 <a type="button" class="btn btn-lg btn-outline-success"
-                                   href="{#}">View</a>
+                                   href="{% url 'blog:blog_detail' pk=blog.id %}">View</a>
+                                {% if user == blog.blog_owner or user.is_staff %}
                                 <a type="button" class="btn btn-lg btn-outline-warning"
                                    href="{#}">Edit</a>
                                 <a type="button" class="btn btn-lg btn-outline-danger"
                                    href="{#}">Delete</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

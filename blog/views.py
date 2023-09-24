@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 
 from blog.forms import BlogForm
 from blog.models import Blog
@@ -63,3 +63,29 @@ class BlogCreateView(CreateView):
         context['title'] = 'Блог'
         context['title_2'] = 'Создание статьи'
         return context
+
+
+class BlogDetailView(DetailView):
+    """
+    Выводит информаццию о статье
+    """
+    model = Blog
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(BlogDetailView, self).get_context_data(**kwargs)
+        context['title'] = 'Блог'
+        context['title_2'] = 'Просмотр статьи'
+        return context
+
+    def get_object(self, queryset=None):
+        """
+        Считает количество просмотров статьи
+        """
+        self.object = super(BlogDetailView, self).get_object(queryset)
+        self.object.blog_views_count += 1
+        self.object.save()
+
+        return self.object
