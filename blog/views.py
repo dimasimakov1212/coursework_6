@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView
 
+from blog.forms import BlogForm
 from blog.models import Blog
 
 
@@ -25,17 +27,39 @@ class BlogListView(ListView):
         Выводит в список только опубликованные статьи
         """
         queryset = super().get_queryset(*args, **kwargs)
-
-        try:
-            user = self.request.user
-
-            if user.is_superuser or user.groups.filter(name='manager'):
-                return queryset
-
-            else:
-                queryset = queryset.filter(blog_owner=user)
-
-        except TypeError:
-            pass
+        queryset = queryset.filter(blog_is_active=True)
 
         return queryset
+
+
+class BlogCreateView(CreateView):
+    """
+    Выводит форму создания статьи
+    """
+    model = Blog
+    form_class = BlogForm
+
+    success_url = reverse_lazy('blog:blog_list')
+
+    def form_valid(self, form):
+        """
+        Реализует заполнение формы блога
+        """
+        self.object = form.save()
+        self.object.blog_owner = self.request.user
+        self.object.save()
+
+        if form.is_valid():
+            new_article = form.save()
+            new_article.save()
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(BlogCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Блог'
+        context['title_2'] = 'Создание статьи'
+        return context

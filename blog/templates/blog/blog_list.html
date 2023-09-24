@@ -4,7 +4,7 @@
 <div class="row py-lg-2">
     <div class="col-lg-11 col-md-8 mx-auto">
         {% if user.is_authenticated %}
-        <a class="btn btn-outline-primary" href="{#}">Создать статью</a>
+        <a class="btn btn-outline-primary" href="{% url 'blog:create_blog' %}">Создать статью</a>
         {% else %}
         <a class="btn btn-outline-primary">Создавать статьи могут только зарегистрированные пользователи</a>
         {% endif %}
@@ -32,16 +32,9 @@
                         </button>
                         <div class="collapse" id="collapseExample{{ forloop.counter }}">
                             <div class="card card-body">
-                                Время рассылки - {{ mailing.mailing_time }}
+                                Количество просмотров - {{ blog.blog_views_count }}
                             <br>
-                                Период рассылки - {{ mailing.mailing_period }}
-                            <br>
-                                Статус рассылки - {{ mailing.mailing_status }}
-                            <br>
-                                Клиенты рассылки -<br>
-                                {% for client in mailing.mailing_clients.all %}
-                                {{ client }}<br>
-                                {% endfor %}
+                                Автор статьи - {{ blog.blog_owner }}
                             <br>
                             </div>
                             <br>
@@ -52,8 +45,6 @@
                                    href="{#}">Edit</a>
                                 <a type="button" class="btn btn-lg btn-outline-danger"
                                    href="{#}">Delete</a>
-                                <a type="button" class="btn btn-lg btn-outline-secondary"
-                                   href="{#}">Logs</a>
                             </div>
                         </div>
                     </div>
