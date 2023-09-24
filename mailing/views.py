@@ -39,23 +39,24 @@ class MailingListView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         """
-        Выводит в список только рассылки конкретного пользователя
+        Выводит в список только рассылки для конкретного пользователя
         """
         queryset = super().get_queryset(*args, **kwargs)
 
         try:
             user = self.request.user
 
+            # если суперпользователь или менеджер, выводит все рассылки
             if user.is_superuser or user.groups.filter(name='manager'):
                 return queryset
 
+            # если пользователь, выводит все рассылки
             else:
                 queryset = queryset.filter(mailing_owner=user)
+                return queryset
 
         except TypeError:
             pass
-
-        return queryset
 
     def get_context_data(self, **kwargs):
         """
