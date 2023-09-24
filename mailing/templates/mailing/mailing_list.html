@@ -8,7 +8,7 @@
         <a class="btn btn-outline-primary" href="{% url 'mailing:message_list' %}">Мои сообщения</a>
         <a class="btn btn-outline-primary" href="{% url 'mailing:client_list' %}">Мои клиенты</a>
         <a type="button" class="btn btn-outline-success"
-                                   href="{% url 'mailing:send_mailing' %}">Отправить рассылки</a>
+                                   href="{% url 'mailing:send_mailing' %}">Отправить рассылки сейчас</a>
         {% else %}
         <a class="btn btn-outline-primary">Создавать рассылки могут только зарегистрированные пользователи</a>
         {% endif %}
