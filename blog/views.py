@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
 from blog.forms import BlogForm
 from blog.models import Blog
@@ -116,4 +116,22 @@ class BlogUpdateView(UpdateView):
         context = super(BlogUpdateView, self).get_context_data(**kwargs)
         context['title'] = 'Блог'
         context['title_2'] = 'Изменение статьи'
+        return context
+
+
+class BlogDeleteView(DeleteView):
+    """
+    Выводит форму удаления статьи
+    """
+    model = Blog
+
+    success_url = reverse_lazy('blog:blog_list')
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(BlogDeleteView, self).get_context_data(**kwargs)
+        context['title'] = 'Блог'
+        context['title_2'] = 'Удаление статьи'
         return context

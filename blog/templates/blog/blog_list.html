@@ -45,7 +45,7 @@
                                 <a type="button" class="btn btn-lg btn-outline-warning"
                                    href="{% url 'blog:edit_blog' pk=blog.id %}">Edit</a>
                                 <a type="button" class="btn btn-lg btn-outline-danger"
-                                   href="{#}">Delete</a>
+                                   href="{% url 'blog:delete_blog' pk=blog.id %}">Delete</a>
                                 {% endif %}
                             </div>
                         </div>
