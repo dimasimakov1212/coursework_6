@@ -15,7 +15,7 @@
 {% block content %}
 
 {% for blog in object_list %}
-<main class="w-100 p-1">
+<div class="col-lg-6 col-md-8 mx-auto">
     <div class="row text-center">
         <div class="col-12">
             <div class="card mb-6 rounded-3 shadow-sm">
@@ -54,7 +54,8 @@
             </div>
         </div>
     </div>
-</main>
+</div>
+<br>
 {% endfor %}
 
 {% endblock %}

@@ -23,16 +23,70 @@
 </div>
 <br>
 
-<div class="container">
 
-    <div class="album py-5 bg-body-tertiary">
-        <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% block content %}
-                {% endblock %}
+{% block content %}
+
+<div class="row py-lg-2">
+    <div class="col-lg-4 col-md-6 mx-auto">
+        <div class="row text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="card-text">Последние новости сервиса</p>
+
+                    <small class="text-body-secondary">
+                        Количество рассылок всего - {{ mailings_count }}</small>
+                    <br>
+                    <small class="text-body-secondary">
+                        Количество активных рассылок - {{ mailings_is_sending }}</small>
+                    <br>
+                    <small class="text-body-secondary">
+                        Количество уникальных клиентов для рассылок - {{ clients_count }}</small>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="container">
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
+
+                {% for blog in blog_list %}
+
+                <div class="col-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <p class="card-text">Статья: {{ blog.blog_title }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="card-header">
+                                    <img class="img-thumbnail"
+                                         src="/media/{{ blog.blog_preview }}" width="150"
+                                         alt="Card image cap"/>
+                                </div>
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-bg btn-outline-secondary"
+                                       href="{% url 'blog:blog_detail' pk=blog.id %}">Читать</a>
+                                </div>
+                            </div>
+                            <br>
+                            <small class="text-body-secondary">
+                                Количество просмотров - {{ blog.blog_views_count }}</small>
+                            <br>
+                            <small class="text-body-secondary">
+                                Автор - {{ blog.blog_owner|default:"Не определен" }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
     {% include 'mailing/includes/inc_mailing_bottom_menu.html' %}
 
 </div>

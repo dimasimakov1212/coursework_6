@@ -27,7 +27,21 @@ class BlogListView(ListView):
         Выводит в список только опубликованные статьи
         """
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.filter(blog_is_active=True)
+
+        try:
+            user = self.request.user
+
+            # если суперпользователь или менеджер, выводит все рассылки
+            if user.is_superuser or user.groups.filter(name='manager'):
+                return queryset
+
+            # если пользователь, выводит все рассылки
+            else:
+                queryset = queryset.filter(blog_owner=user)
+                return queryset
+
+        except TypeError:
+            pass
 
         return queryset
 
