@@ -1,33 +1,33 @@
-from datetime import datetime
-from smtplib import SMTPException
+from random import sample
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views import View
+
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
+from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, Client, Message, Log
 from mailing.services import sending_email
 
 
-class MainPageView(ListView):
-    """
-    Стартовая страница
-    """
-    model = Mailing
-    template_name = 'mailing/base.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Выводит контекстную информацию в шаблон
-        """
-        context = super(MainPageView, self).get_context_data(**kwargs)
-
-        context['title'] = 'Главная'
-        context['title_2'] = 'сервис создания рассылок'
-
-        return context
+# class MainPageView(ListView):
+#     """
+#     Стартовая страница
+#     """
+#     model = Mailing
+#     template_name = 'mailing/base.html'
+#
+#     def get_context_data(self, **kwargs):
+#         """
+#         Выводит контекстную информацию в шаблон
+#         """
+#         context = super(MainPageView, self).get_context_data(**kwargs)
+#
+#         context['title'] = 'Главная'
+#         context['title_2'] = 'сервис создания рассылок'
+#
+#         return context
 
 
 class MailingListView(ListView):
@@ -39,23 +39,24 @@ class MailingListView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         """
-        Выводит в список только рассылки конкретного пользователя
+        Выводит в список только рассылки для конкретного пользователя
         """
         queryset = super().get_queryset(*args, **kwargs)
 
         try:
             user = self.request.user
 
+            # если суперпользователь или менеджер, выводит все рассылки
             if user.is_superuser or user.groups.filter(name='manager'):
                 return queryset
 
+            # если пользователь, выводит все рассылки
             else:
                 queryset = queryset.filter(mailing_owner=user)
+                return queryset
 
         except TypeError:
             pass
-
-        return queryset
 
     def get_context_data(self, **kwargs):
         """
@@ -418,3 +419,32 @@ def mailing_logs(request, pk):
         return render(request, 'mailing/log_list.html', context)
     else:
         return redirect("mailing:mailing_list")
+
+
+def main_page_view(request):
+    """
+    Выводит на главную страницу
+    :return:
+    """
+    # вроде как нежелательный вариант получения трех случайных статей
+    # blog_list = Blog.objects.filter(blog_is_active=True).order_by('?')[:3]
+
+    blogs = Blog.objects.filter(blog_is_active=True)  # Получаем все опубликованные статьи
+    blog_list = sample(list(blogs), 3)  # Получаем 3 случайных статьи
+
+    mailings_count = Mailing.objects.count()  # получаем количество рассылок всего
+
+    # определяем количество рассылок, которые рассылаются
+    mailings_is_sending = Mailing.objects.filter(mailing_status='рассылается').count()
+
+    clients_count = Client.objects.count()  # получаем количество клиентов для рассылок
+
+    context = {
+        'title': 'Главная',
+        'title_2': 'сервис создания рассылок',
+        'blog_list': blog_list,
+        'mailings_count': mailings_count,
+        'mailings_is_sending': mailings_is_sending,
+        'clients_count': clients_count
+    }
+    return render(request, 'mailing/base.html', context)

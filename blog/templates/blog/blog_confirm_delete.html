@@ -1,6 +1,5 @@
 {% extends 'mailing/base.html' %}
 
-
 {% block content %}
 
     <div class="col-lg-3 col-md-8 mx-auto">
@@ -10,9 +9,9 @@
                     <div class="card-body">
                         <form method="post">
                             {% csrf_token %}
-                            <p>Хотите удалить рассылку {{ object.mailing_title }} ?</p>
+                            <p>Хотите удалить статью: {{ blog.blog_title }} ?</p>
                             <button type="submit" class="btn btn-danger">Подтвердить</button>
-                            <a class="btn btn-warning" href="{% url 'mailing:mailing_list' %}">Отмена</a>
+                            <a class="btn btn-warning" href="{% url 'blog:blog_list' %}">Отмена</a>
                         </form>
                     </div>
                 </div>

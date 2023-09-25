@@ -18,9 +18,6 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # mailing_owner = self.instance.mailing_owner
-        # self.fields['mailing_client'].queryset = Client.objects.filter(client_owner=mailing_owner)
-
         # определяем список клиентов для рассылки, принадлежащих пользователю
         self.fields['mailing_clients'].queryset = Client.objects.filter(client_owner=user)
 
