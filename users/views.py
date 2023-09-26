@@ -137,20 +137,6 @@ class UserListView(PermissionRequiredMixin, ListView):
         """
         context = super(UserListView, self).get_context_data(**kwargs)
 
-        if settings.CACHE_ENABLED:  # если включено кэширование
-            key = 'users_list'  # ключ, по которому получаем список пользователей
-            users_list = cache.get(key)  # получаем данные из кэша
-
-            if users_list is None:  # проверяем кэш
-                users_list = User.objects.all()  # если пусто, получаем данные из БД
-
-                cache.set(key, users_list)  # записываем полученные данные в кэш
-
-        else:  # если кэширование не включено
-            users_list = User.objects.all()  # получаем данные из БД
-
-        context['object_list'] = users_list  # передаем в контекст список пользователей
-
         context['title'] = 'Пользователи'
         context['title_2'] = 'пользователи сервиса рассылок'
 

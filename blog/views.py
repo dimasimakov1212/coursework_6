@@ -31,19 +31,17 @@ class BlogListView(ListView):
         try:
             user = self.request.user
 
-            # если суперпользователь или менеджер, выводит все рассылки
+            # если суперпользователь или менеджер, выводит все статьи
             if user.is_superuser or user.groups.filter(name='manager'):
                 return queryset
 
-            # если пользователь, выводит все рассылки
+            # если пользователь, выводит только его статьи
             else:
                 queryset = queryset.filter(blog_owner=user)
                 return queryset
 
         except TypeError:
             pass
-
-        return queryset
 
 
 class BlogCreateView(CreateView):

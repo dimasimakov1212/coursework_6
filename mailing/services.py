@@ -60,20 +60,22 @@ def send_all_mailings():
 
     mailings = Mailing.objects.filter(mailing_status=Mailing.STATUS_SENT)  # получаем рассылки со статусом "рассылается"
 
-    for mailing in mailings:
+    for mailing in mailings:  # перебираем рассылки
 
         date_time_now = datetime.datetime.now()  # получаем текущие дату и время
 
-        for client in mailing.mailing_clients.all():
+        for client in mailing.mailing_clients.all():  # перебираем клиентов для рассылки
 
-            mailing_log = Log.objects.filter(log_client=client, log_mailing=mailing)
+            mailing_log = Log.objects.filter(log_client=client, log_mailing=mailing)  # получаем данные о логах
             if mailing_log.exists():
-                last_try = mailing_log.order_by('-log_date_time').first()
+                last_try = mailing_log.order_by('-log_date_time').first()  # получаем данные последнего лога
                 desired_timezone = pytz.timezone('Europe/Moscow')
                 last_try_date = last_try.log_date_time.astimezone(desired_timezone)
+
+                # делаем проверку периодичности рассылок
                 if mailing.PERIOD_DAILY:
                     if (date_time_now.date() - last_try_date.date()).days >= 1:
-                        sending_email(mailing, client)
+                        sending_email(mailing, client)  # отправляем письмо с рассылкой
                 elif mailing.PERIOD_WEEKLY:
                     if (date_time_now.date() - last_try_date.date()).days >= 7:
                         sending_email(mailing, client)
