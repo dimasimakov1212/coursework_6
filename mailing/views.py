@@ -69,15 +69,11 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         """
         Проверяем данные на правильность заполнения
         """
-        # formset = self.get_context_data()['formset']
+
         user = self.request.user
         self.object = form.save()
         self.object.mailing_owner = user
         self.object.save()
-
-        # if formset.is_valid():
-        #     formset.instance = self.object
-        #     formset.save()
 
         return super().form_valid(form)
 

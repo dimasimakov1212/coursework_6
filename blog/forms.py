@@ -16,7 +16,6 @@ class BlogForm(StyleFormMixin, forms.ModelForm):
     """
      Создает форму для создания товара
     """
-
     class Meta:
         """
         Определяет параметры формы
