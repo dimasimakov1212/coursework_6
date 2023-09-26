@@ -156,3 +156,13 @@ EMAIL_USE_SSL = True
 CRONJOBS = [
     ('*/5 * * * *', 'mailing.services.send_all_mailings')
 ]
+
+CACHE_ENABLED = 'CACHE_ENABLED'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('CACHE_LOCATION'),
+        }
+    }

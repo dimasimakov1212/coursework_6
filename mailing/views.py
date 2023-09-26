@@ -1,6 +1,8 @@
 from random import sample
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 
@@ -387,8 +389,36 @@ def mailing_logs(request, pk):
     :param pk: id рассылки
     :return:
     """
+    # mailing = get_object_or_404(Mailing, pk=pk)
+    # logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')[:10]
+    #
+    # if (mailing.mailing_owner == request.user or request.user.is_superuser
+    #         or request.user.groups.filter(name='manager').exists()):
+    #     context = {
+    #         'title': 'Логи',
+    #         'title_2': 'логи ваших рассылок',
+    #         'title_3': '(выводится список из 10 последних логов рассылки)',
+    #         'logs': logs,
+    #     }
+    #     return render(request, 'mailing/log_list.html', context)
+    # else:
+    #     return redirect("mailing:mailing_list")
+
+# ----------------- вариант с кэшированием -----------------------------------
+
     mailing = get_object_or_404(Mailing, pk=pk)
-    logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')[:10]
+
+    if settings.CACHE_ENABLED:  # если включено кэширование
+        key = 'logs_list'  # ключ, по которому получаем список пользователей
+        logs = cache.get(key)  # получаем данные из кэша
+
+        if logs is None:  # проверяем кэш, если пусто, получаем данные из БД
+            logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')[:10]
+
+            cache.set(key, logs)  # записываем полученные данные в кэш
+
+    else:  # если кэширование не включено
+        logs = Log.objects.filter(log_mailing=mailing).order_by('-log_date_time')[:10]  # получаем данные из БД
 
     if (mailing.mailing_owner == request.user or request.user.is_superuser
             or request.user.groups.filter(name='manager').exists()):
@@ -401,6 +431,8 @@ def mailing_logs(request, pk):
         return render(request, 'mailing/log_list.html', context)
     else:
         return redirect("mailing:mailing_list")
+
+# ---------------------------- конец -----------------------------------------
 
 
 def main_page_view(request):

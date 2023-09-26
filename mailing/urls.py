@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from mailing.services import toggle_sending
 from mailing.views import MailingListView, MailingCreateView, ClientListView, ClientCreateView, \
@@ -10,11 +11,10 @@ from mailing.apps import MailingConfig
 app_name = MailingConfig.name
 
 urlpatterns = [
-    # path('', MainPageView.as_view(), name='home'),
     path('', main_page_view, name='home'),
     path('mailing/', MailingListView.as_view(), name='mailing_list'),
     path('mailing/create_mailing/', MailingCreateView.as_view(), name='create_mailing'),
-    path('mailing/mailing_detail/<int:pk>/', MailingDetailView.as_view(), name='mailing_detail'),
+    path('mailing/mailing_detail/<int:pk>/', cache_page(60)(MailingDetailView.as_view()), name='mailing_detail'),
     path('mailing/edit_mailing/<int:pk>/', MailingUpdateView.as_view(), name='edit_mailing'),
     path('mailing/delete_mailing/<int:pk>/', MailingDeleteView.as_view(), name='delete_mailing'),
     path('mailing/clients/', ClientListView.as_view(), name='client_list'),
