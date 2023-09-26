@@ -37,7 +37,7 @@
                     </button>
                     <div class="collapse" id="collapseExample{{ forloop.counter }}">
                         <div class="card card-body">
-                            Время рассылки - {{ mailing.mailing_time }}
+                            Автор рассылки - {{ mailing.mailing_owner }}
                             <br>
                             Период рассылки - {{ mailing.mailing_period }}
                             <br>
@@ -53,12 +53,20 @@
                         <div class="col">
                             <a type="button" class="btn btn-lg btn-outline-success"
                                href="{% url 'mailing:mailing_detail' pk=mailing.id %}">View</a>
-                            <a type="button" class="btn btn-lg btn-outline-warning"
-                               href="{% url 'mailing:edit_mailing' pk=mailing.id %}">Edit</a>
-                            <a type="button" class="btn btn-lg btn-outline-danger"
-                               href="{% url 'mailing:delete_mailing' pk=mailing.id %}">Delete</a>
-                            <a type="button" class="btn btn-lg btn-outline-secondary"
-                               href="{% url 'mailing:log_list' pk=mailing.id %}">Logs</a>
+                            {% if request.user == mailing.mailing_owner %}
+                                <a type="button" class="btn btn-lg btn-outline-warning"
+                                   href="{% url 'mailing:edit_mailing' pk=mailing.id %}">Edit</a>
+                                <a type="button" class="btn btn-lg btn-outline-danger"
+                                   href="{% url 'mailing:delete_mailing' pk=mailing.id %}">Delete</a>
+                            {% endif %}
+                                <a type="button" class="btn btn-lg btn-outline-secondary"
+                                   href="{% url 'mailing:log_list' pk=mailing.id %}">Logs</a>
+                            {% if request.user.is_staff %}
+                                {% if mailing.mailing_status == 'рассылается' %}
+                                <a type="button" class="btn btn-lg btn-warning"
+                                   href="{% url 'mailing:toggle_sending' pk=mailing.id %}">Остановить рассылку</a>
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>

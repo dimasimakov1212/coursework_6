@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.generic import CreateView, TemplateView, UpdateView, ListView
+from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView
 
 from config import settings
 from users.forms import UserRegisterForm, UserProfileForm, ManagerUpdateUserProfileForm
@@ -134,5 +134,23 @@ class UserListView(ListView):
         """
         context = super(UserListView, self).get_context_data(**kwargs)
         context['title'] = 'Пользователи'
-        # context['title_2'] = 'Полезные статьи'
+        context['title_2'] = 'пользователи сервиса рассылок'
+        return context
+
+
+class UserDetailView(DetailView):
+    """
+    Выводит информаццию об одной рассылке
+    """
+    model = User
+
+    def get_context_data(self, **kwargs):
+        """
+        Выводит контекстную информацию в шаблон
+        """
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+
+        context['title'] = 'Пользователь'
+        context['title_2'] = 'информация о пользователе сервиса'
+
         return context

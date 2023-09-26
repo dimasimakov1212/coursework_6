@@ -11,18 +11,19 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                         <a type="button" class="btn btn-sm btn-outline-secondary"
-                                href="{#}">View</a>
-                        <a type="button" class="btn btn-sm btn-outline-secondary"
-                                href="{#}">Edit</a>
+                                href="{% url 'users:user_detail' pk=object.id %}">View</a>
+
                         {% if perms.users.delete_user %}
                         <a type="button" class="btn btn-sm btn-outline-danger"
                                 href="{#}">Delete</a>
                         {% endif %}
                     </div>
-                    {% if object.is_active %}
-                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' pk=object.id %}">Деактивировать</a>
-                    {% else %}
-                        <a class="btn btn-success" href="{% url 'users:toggle_activity' pk=object.id %}">Активировать</a>
+                    {% if perms.users.change_user %}
+                        {% if object.is_active %}
+                            <a class="btn btn-warning" href="{% url 'users:toggle_activity' pk=object.id %}">Деактивировать</a>
+                        {% else %}
+                            <a class="btn btn-success" href="{% url 'users:toggle_activity' pk=object.id %}">Активировать</a>
+                        {% endif %}
                     {% endif %}
                 </div>
                 {% else %}
