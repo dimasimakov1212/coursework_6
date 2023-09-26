@@ -1,5 +1,6 @@
 from random import sample
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 
@@ -9,25 +10,6 @@ from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, Client, Message, Log
 from mailing.services import sending_email
-
-
-# class MainPageView(ListView):
-#     """
-#     Стартовая страница
-#     """
-#     model = Mailing
-#     template_name = 'mailing/base.html'
-#
-#     def get_context_data(self, **kwargs):
-#         """
-#         Выводит контекстную информацию в шаблон
-#         """
-#         context = super(MainPageView, self).get_context_data(**kwargs)
-#
-#         context['title'] = 'Главная'
-#         context['title_2'] = 'сервис создания рассылок'
-#
-#         return context
 
 
 class MailingListView(ListView):
@@ -72,7 +54,7 @@ class MailingListView(ListView):
         return context
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
     """
     Выводит форму создания рассылки
     """
@@ -201,7 +183,7 @@ class ClientListView(ListView):
         return context
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
     """
     Выводит форму создания клиента
     """
@@ -230,7 +212,7 @@ class ClientCreateView(CreateView):
         return context
 
 
-class ClientUpdateView(UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
     """
     Выводит форму редактирования клиента
     """
@@ -276,7 +258,7 @@ class ClientDeleteView(DeleteView):
         return context
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
     """
     Выводит информаццию о сообщениях пользователя для рассылок
     """
@@ -305,7 +287,7 @@ class MessageListView(ListView):
         return context
 
 
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     """
     Выводит форму создания клиента
     """
@@ -334,7 +316,7 @@ class MessageCreateView(CreateView):
         return context
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     """
     Выводит форму редактирования сообщения
     """
@@ -362,7 +344,7 @@ class MessageUpdateView(UpdateView):
         return context
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     """
     Выводит форму удаления сообщения
     """

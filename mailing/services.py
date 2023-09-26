@@ -4,6 +4,8 @@ import pytz
 import datetime
 
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 
 from config import settings
 from mailing.models import Mailing, Log
@@ -82,3 +84,14 @@ def send_all_mailings():
                 sending_email(mailing, client)
 
 
+def toggle_sending(request, pk):
+    """
+    Меняет статус рассылки на остановлена
+    """
+    mailing = get_object_or_404(Mailing, pk=pk)
+    if mailing.mailing_status == 'рассылается':
+        mailing.mailing_status = 'остановлено'
+
+    mailing.save()
+
+    return redirect(reverse('mailing:mailing_list'))

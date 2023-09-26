@@ -16,7 +16,7 @@
                 <div style="background-color:#F0E68C;">
                     <div class="card-body">
                         <a class="p-2 btn btn-outline-primary" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
-                        <a class="p-2 btn btn-outline-primary" href="#">Контакты</a>
+
                         <a class="p-2 btn btn-outline-success" href="{% url 'blog:blog_list' %}">Блог</a>
                     </div>
                 </div>
@@ -48,20 +48,17 @@
             </div>
         </div>
     </nav>
-    {% if user.is_staff %}
+{% if user.is_staff %}
     <nav class="ms-5">
         <div class="col">
             <div class="card bg-warning shadow-sm">
                 <div style="background-color:#F0E68C;">
                     <div class="card-body">
-                        <div class="badge badge-primary text-wrap text-body" style="width: 10rem;">
-                            Доступ для менеджера
-                        </div>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:user_list' %}">Пользователи</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
-    {% endif %}
+{% endif %}
 </div>
