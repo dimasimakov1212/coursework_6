@@ -29,9 +29,9 @@
                 <div style="background-color:#F0E68C;">
                     <div class="card-body">
 
-                        {% if user.is_authenticated %}
+                        {% if request.user.is_authenticated %}
                         <div class="badge badge-primary text-wrap text-body" style="width: 10rem;">
-                            Привет, {{ user.email }}
+                            Привет, {{ request.user.email }}
                         </div>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:logout' %}">Выйти</a>
                         <a class="p-2 btn btn-outline-primary" href="{% url 'users:profile' %}">Профиль</a>
@@ -48,7 +48,7 @@
             </div>
         </div>
     </nav>
-{% if user.is_staff %}
+{% if request.user.is_staff %}
     <nav class="ms-5">
         <div class="col">
             <div class="card bg-warning shadow-sm">

@@ -440,7 +440,10 @@ def main_page_view(request):
     # blog_list = Blog.objects.filter(blog_is_active=True).order_by('?')[:3]
 
     blogs = Blog.objects.filter(blog_is_active=True)  # Получаем все опубликованные статьи
-    blog_list = sample(list(blogs), 3)  # Получаем 3 случайных статьи
+    if len(blogs) >= 3:
+        blog_list = sample(list(blogs), 3)  # Получаем 3 случайных статьи
+    else:
+        blog_list = blogs
 
     mailings_count = Mailing.objects.count()  # получаем количество рассылок всего
 
