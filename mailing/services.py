@@ -67,23 +67,32 @@ def send_all_mailings():
         for client in mailing.mailing_clients.all():  # перебираем клиентов для рассылки
 
             mailing_log = Log.objects.filter(log_client=client, log_mailing=mailing)  # получаем данные о логах
-            if mailing_log.exists():
-                last_try = mailing_log.order_by('-log_date_time').first()  # получаем данные последнего лога
-                desired_timezone = pytz.timezone('Europe/Moscow')
-                last_try_date = last_try.log_date_time.astimezone(desired_timezone)
 
-                # делаем проверку периодичности рассылок
-                if mailing.PERIOD_DAILY:
-                    if (date_time_now.date() - last_try_date.date()).days >= 1:
-                        sending_email(mailing, client)  # отправляем письмо с рассылкой
-                elif mailing.PERIOD_WEEKLY:
-                    if (date_time_now.date() - last_try_date.date()).days >= 7:
-                        sending_email(mailing, client)
-                elif mailing.PERIOD_MONTHLY:
-                    if (date_time_now.date() - last_try_date.date()).days >= 30:
-                        sending_email(mailing, client)
-            else:
-                sending_email(mailing, client)
+            # проверяем попадает ли текущая дата в период рассылки
+            if mailing.mailing_time_start < date_time_now < mailing.mailing_time_finish:
+
+                if mailing_log.exists():
+                    last_try = mailing_log.order_by('-log_date_time').first()  # получаем данные последнего лога
+                    desired_timezone = pytz.timezone('Europe/Moscow')
+                    last_try_date = last_try.log_date_time.astimezone(desired_timezone)
+
+                    # делаем проверку периодичности рассылок
+                    if mailing.PERIOD_DAILY:
+                        if (date_time_now.date() - last_try_date.date()).days >= 1:
+                            sending_email(mailing, client)  # отправляем письмо с рассылкой
+                    elif mailing.PERIOD_WEEKLY:
+                        if (date_time_now.date() - last_try_date.date()).days >= 7:
+                            sending_email(mailing, client)
+                    elif mailing.PERIOD_MONTHLY:
+                        if (date_time_now.date() - last_try_date.date()).days >= 30:
+                            sending_email(mailing, client)
+                else:
+                    sending_email(mailing, client)
+
+            # если текущая дата больше даты окончания рассылки, рассылке присваивается статус "остановлено"
+            elif date_time_now > mailing.mailing_time_finish:
+                mailing.mailing_status = mailing.STATUS_STOPPED
+                mailing.save()
 
 
 def toggle_sending(request, pk):
