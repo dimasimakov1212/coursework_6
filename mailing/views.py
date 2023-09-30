@@ -1,5 +1,7 @@
+import datetime
 from random import sample
 
+import pytz
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.cache import cache
@@ -365,15 +367,27 @@ def send_mailing_to_clients(request):
     Функция отправки рассылок клиентам
     """
 
+    date_time_now = datetime.datetime.now()  # получаем текущие дату и время
     user = request.user
     mailings = Mailing.objects.filter(mailing_owner=user)  # получаем рассылки пользователя
 
+    desired_timezone = pytz.timezone('Europe/Moscow')
+
     for mailing in mailings:
+        time_start = mailing.mailing_time_start.astimezone(desired_timezone)
+        time_now = date_time_now.astimezone(desired_timezone)
+        time_finish = mailing.mailing_time_finish.astimezone(desired_timezone)
+
         if mailing.mailing_status == 'рассылается':  # проверяем статус рассылки, если 'рассылается', то происходит отправка
 
-            for client in mailing.mailing_clients.all():
+            if time_start < time_now < time_finish:
 
-                sending_email(mailing, client)  # функция отправки письма
+                for client in mailing.mailing_clients.all():
+
+                    sending_email(mailing, client)  # функция отправки письма
+            elif time_now > time_finish:
+                mailing.mailing_status = mailing.STATUS_STOPPED
+                mailing.save()
 
     return redirect(reverse('mailing:mailing_list'))
 
